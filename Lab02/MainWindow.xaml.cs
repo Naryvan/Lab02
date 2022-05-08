@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lab02.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,24 +28,34 @@ namespace Lab02
 
         private void Proceed_Click(object Sender, EventArgs e)
         {
-            if (!Person.IsDateCorrect((DateTime)datePicker.SelectedDate))
+            try
             {
-                MessageBox.Show("Date is incorrect");
-                return;
+                Person person = new Person(firstName.Text, lastName.Text, email.Text, (DateTime)datePicker.SelectedDate);
+                if (person.IsBirthday)
+                {
+                    MessageBox.Show("Happy Birthday!");
+                }
+                outFirstName.Text = person.FirstName;
+                outLastName.Text = person.LastName;
+                outEmail.Text = person.Email;
+                outBirthday.Text = person.Birthday.ToString("dd/MM/yyyy");
+                outIsAdult.Text = "Is adult: " + person.IsAdult;
+                outSunSign.Text = person.SunSign;
+                outChineseSign.Text = person.ChineseSign;
+                outIsBirthday.Text = "Is birthday: " + person.IsBirthday;
             }
-            Person person = new Person(firstName.Text, lastName.Text, email.Text, (DateTime)datePicker.SelectedDate);
-            if (person.IsBirthday)
+            catch (IncorrectEmailException exc)
             {
-                MessageBox.Show("Happy Birthday!");
+                MessageBox.Show(exc.Message);
             }
-            outFirstName.Text = person.FirstName;
-            outLastName.Text = person.LastName;
-            outEmail.Text = person.Email;
-            outBirthday.Text = person.Birthday.ToString("dd/MM/yyyy");
-            outIsAdult.Text = "Is adult: " + person.IsAdult;
-            outSunSign.Text = person.SunSign;
-            outChineseSign.Text = person.ChineseSign;
-            outIsBirthday.Text = "Is birthday: " + person.IsBirthday;
+            catch (TooYoungException exc)
+            {
+                MessageBox.Show(exc.Message);
+            }
+            catch (TooOldException exc)
+            {
+                MessageBox.Show(exc.Message);
+            }
         }
 
         private void DatePicker_DateChanged(object Sender, SelectionChangedEventArgs e)

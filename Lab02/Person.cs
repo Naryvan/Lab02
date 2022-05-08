@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Lab02.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Lab02
@@ -73,6 +75,8 @@ namespace Lab02
 
         public Person(string firstName, string lastName, string email, DateTime birthday)
         {
+            ValidateEmail(email);
+            ValidateDate(birthday);
             this._firstName = firstName;
             this._lastName = lastName;
             this._email = email;
@@ -81,6 +85,7 @@ namespace Lab02
 
         public Person(string firstName, string lastName, string email)
         {
+            ValidateEmail(email);
             this.FirstName = firstName;
             this._lastName = lastName;
             this._email = email;
@@ -88,6 +93,7 @@ namespace Lab02
 
         public Person(string firstName, string lastName, DateTime birthday)
         {
+            ValidateDate(birthday);
             this.FirstName = firstName;
             this._lastName = lastName;
             this._birthday = birthday;
@@ -143,6 +149,28 @@ namespace Lab02
         private int CalculateChineseZodiac()
         {
             return _birthday.Year % 12;
+        }
+
+        private static void ValidateEmail(string email)
+        {
+            Regex regex = new Regex("[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}");
+            if(!regex.IsMatch(email))
+            {
+                throw new IncorrectEmailException("Email address is incorrect");
+            }
+        }
+
+        private static void ValidateDate(DateTime date)
+        {
+            int age = GetAge(date);
+            if (age < 0)
+            {
+                throw new TooYoungException("Date is placed in the future");
+            }
+            if (age > 135)
+            {
+                throw new TooOldException("Date is placed too far in the past");
+            }
         }
 
     }
